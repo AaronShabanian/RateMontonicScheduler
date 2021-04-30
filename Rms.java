@@ -27,30 +27,26 @@ public class Rms extends Thread {
                 schedule();
             }
         };
-        Runnable firstRun = new Runnable(){
+        Rms firstThread = new Rms(){
             public void run(){
                 one();
             }
         };
-        Thread firstThread= new Thread(firstRun);
-        Runnable secondRun = new Runnable(){
+        Rms secondThread = new Rms(){
             public void run(){
                 two();
             }
         };
-        Thread secondThread= new Thread(secondRun);
-        Runnable thirdRun = new Runnable(){
+        Rms thirdThread = new Rms(){
             public void run(){
                 three();
             }
         };
-        Thread thirdThread = new Thread(thirdRun);
-        Runnable fourthRun = new Runnable(){
+        Rms fourthThread = new Rms(){
             public void run(){
                 four();
             }
         };
-        Thread fourthThread= new Thread(fourthRun);
         scheduler.start();
         firstThread.start();
         secondThread.start();
@@ -81,7 +77,7 @@ public class Rms extends Thread {
     public static void schedule(){
         fourth.release();
         try{
-            Thread.sleep(15);
+            Thread.sleep(1);
             fourth.acquire();   
         }
         catch(Exception e){
@@ -90,7 +86,7 @@ public class Rms extends Thread {
         System.out.println("Break");
         fourth.release(); 
         try{
-            Thread.sleep(5);
+            Thread.sleep(1);
             fourth.acquire(); 
         }
         catch(Exception e){
