@@ -75,17 +75,35 @@ public class Rms extends Thread {
         }
     }
     public static void schedule(){
-        second.release();
+        fourth.release();
+        try{
+            Thread.sleep(1);
+            fourth.acquire();   
+        }
+        catch(Exception e){
+
+        }
+        System.out.println("Break");
+        fourth.release(); 
+        try{
+            Thread.sleep(1);
+            fourth.acquire(); 
+        }
+        catch(Exception e){
+
+        }
     }
 
     //Following functions run doWork() the specified number of times and check for semaphore synchronization
     public static void one(){
         boolean hasPermit=false;
-        for(int i=0; i<100; i++){
+        int counter=0;
+        while(counter<100){
             try{ 
                 hasPermit=first.tryAcquire();
                 if(hasPermit){
                     doWork(arr);
+                    counter++;
                 }
             }finally {
                 if (hasPermit) {
@@ -97,11 +115,13 @@ public class Rms extends Thread {
     }
     public static void two(){
         boolean hasPermit=false;
-        for(int i=0; i<200; i++){
+        int counter=0;
+        while(counter<200){
             try{ 
                 hasPermit=second.tryAcquire();
                 if(hasPermit){
                     doWork(arr);
+                    counter++;
                 }
             }finally {
                 if (hasPermit) {
@@ -112,11 +132,13 @@ public class Rms extends Thread {
     }
     public static void three(){
         boolean hasPermit=false;
-        for(int i=0; i<400; i++){
+        int counter=0;
+        while(counter<400){
             try{ 
                 hasPermit=third.tryAcquire();
                 if(hasPermit){
                     doWork(arr);
+                    counter++;
                 }
             }finally {
                 if (hasPermit) {
@@ -127,11 +149,14 @@ public class Rms extends Thread {
     }
     public static void four(){
         boolean hasPermit=false;
-        for(int i=0; i<1600; i++){
+        int counter=0;
+        while(counter<1600){
             try{ 
                 hasPermit=fourth.tryAcquire();
                 if(hasPermit){
                     doWork(arr);
+                    counter++;
+                    System.out.println(counter);
                 }
             }finally {
                 if (hasPermit) {
