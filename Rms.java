@@ -82,6 +82,11 @@ public class Rms extends Thread {
         System.out.println("Second Thread: "+ secondOverrun );
         System.out.println("Third Thread: "+ thirdOverrun );
         System.out.println("Fourth Thread: "+ fourthOverrun );
+        System.out.println("Number of times the thread completed");
+        System.out.println("First Thread: "+ firstCompleteCounter );
+        System.out.println("Second Thread: "+ secondCompleteCounter );
+        System.out.println("Third Thread: "+ thirdCompleteCounter );
+        System.out.println("Fourth Thread: "+ fourthCompleteCounter );
     }
     //Scheduler method (Triggers the other 4 threads in time (uses semaphores))
     public static void doWork(double [][] arr){
@@ -103,6 +108,7 @@ public class Rms extends Thread {
             }
         }
     }
+    // Variables that are used for counters
     static boolean oneComplete=false;
     static boolean twoComplete=false;
     static boolean threeComplete=false;
@@ -115,6 +121,14 @@ public class Rms extends Thread {
     static int secondOverrun=0;
     static int thirdOverrun=0;
     static int fourthOverrun=0;
+    static int firstCompleteCounter=0;
+    static int secondCompleteCounter=0;
+    static int thirdCompleteCounter=0;
+    static int fourthCompleteCounter=0;
+    static boolean firstOverrunRedo=false;
+    static boolean secondOverrunRedo=false;
+    static boolean thirdOverrunRedo=false;
+    static boolean fourthOverrunRedo=false;
     public static void schedule(){
         int firstChecker=0;
         int secondChecker=0;
@@ -124,6 +138,43 @@ public class Rms extends Thread {
         //System.out.println("Test");
         startTime=System.currentTimeMillis();
         while(done==false){
+            if(firstOverrunRedo==true){
+                first.release();
+                while(oneComplete==false){
+                    //I couldn't use a semaphore instead because that would freeze the timer
+                    //in the scheduler. 
+                }
+                firstCounter++;
+                firstOverrunRedo=false;
+                oneComplete=false;
+            }
+            if(secondOverrunRedo==true){
+                second.release();
+                while(twoComplete==false){
+                    
+                }
+                secondCounter++;
+                secondOverrunRedo=false;
+                twoComplete=false;
+            }
+            if(thirdOverrunRedo==true){
+                third.release();
+                while(threeComplete==false){
+                    
+                }
+                thirdCounter++;
+                thirdOverrunRedo=false;
+                threeComplete=false;
+            }
+            if(fourthOverrunRedo==true){
+                fourth.release();
+                while(fourComplete==false){
+                    
+                }
+                fourthCounter++;
+                fourthOverrunRedo=false;
+                fourComplete=false;
+            }
             if(oneComplete==false){
                 if(firstChecker<1){
                     first.release(); 
@@ -131,7 +182,7 @@ public class Rms extends Thread {
                     firstCounter++;
                 }
             }
-            else if(twoComplete==false){
+            else if(oneComplete==true && twoComplete==false){
                 if(secondChecker<1){
                     second.release();
                     secondChecker++; 
@@ -139,14 +190,14 @@ public class Rms extends Thread {
                 }
                 
             }
-            else if(threeComplete==false){
+            else if(oneComplete==true && twoComplete==true &&threeComplete==false){
                 if(thirdChecker<1){
                     third.release();
                     thirdChecker++;
                     thirdCounter++;
                 }
             }
-            else if(fourComplete==false){
+            else if(oneComplete==true &&twoComplete==true && threeComplete==true && fourComplete==false){
                 if(fourthChecker<1){
                     fourth.release();
                     fourthChecker++;
@@ -186,23 +237,27 @@ public class Rms extends Thread {
                 }
                 if(oneComplete==false){
                     firstOverrun++;
+                    firstOverrunRedo=true;
                 }
                 oneComplete=false;
                 if(genCounter%2==0){
                     if(twoComplete==false){
                         secondOverrun++;
+                        secondOverrunRedo=true;
                     }
                     twoComplete=false;
                 }
                 if(genCounter%4==0){
                     if(threeComplete==false){
                         thirdOverrun++;
+                        thirdOverrunRedo=true;
                     }
                     threeComplete=false;
                 }
                 if(genCounter%16==0){
                     if(fourComplete==false){
                         fourthOverrun++;
+                        fourthOverrunRedo=true;
                     }
                     genCounter=0;
                     fourComplete=false;
@@ -230,12 +285,12 @@ public class Rms extends Thread {
         }
         oneComplete=true;
         first.tryAcquire();
-
+        firstCompleteCounter++;
     }
     public static void two(){
         boolean hasPermit=false;
         int counter=0;
-        while(counter<200){
+        while(counter<27000){
             try{ 
                 hasPermit=second.tryAcquire();
                 if(hasPermit){
@@ -250,6 +305,7 @@ public class Rms extends Thread {
         }
         twoComplete=true;
         second.tryAcquire();
+        secondCompleteCounter++;
     }
     public static void three(){
         boolean hasPermit=false;
@@ -269,6 +325,7 @@ public class Rms extends Thread {
         }
         threeComplete=true;
         third.tryAcquire();
+        thirdCompleteCounter++;
     }
     public static void four(){
         boolean hasPermit=false;
@@ -288,5 +345,6 @@ public class Rms extends Thread {
         }
         fourComplete=true;
         fourth.tryAcquire();
+        fourthCompleteCounter++;
     }
 }
