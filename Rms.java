@@ -290,7 +290,7 @@ public class Rms extends Thread {
     public static void two(){
         boolean hasPermit=false;
         int counter=0;
-        while(counter<27000){
+        while(counter<200){
             try{ 
                 hasPermit=second.tryAcquire();
                 if(hasPermit){
