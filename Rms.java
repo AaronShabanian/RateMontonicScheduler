@@ -7,6 +7,7 @@ public class Rms extends Thread {
     private static Semaphore fourth; 
     public static boolean done=false;
     private static long startTime=0;
+    public static long startTimes=0;
     public Rms()
     {
         first = new Semaphore(0);
@@ -18,6 +19,7 @@ public class Rms extends Thread {
    
     public static double[][] arr = new double[10][10];
     public static void main(String[] args){
+        startTimes=System.currentTimeMillis();
         //creation of 2d array for doWork function
         for(int i=0; i<arr.length; i++){
             for(int j=0; j<arr.length; j++){
@@ -33,6 +35,10 @@ public class Rms extends Thread {
             public void run(){
                 for(int i=0; i<160; i++){
                     one();
+                    //Emergency Kill Switch 
+                    if(System.currentTimeMillis()>startTimes+1600){
+                        break;
+                    }
                 }
             }
         };
@@ -40,6 +46,9 @@ public class Rms extends Thread {
             public void run(){
                 for(int i=0; i<80; i++){
                     two();
+                    if(System.currentTimeMillis()>startTimes+1600){
+                        break;
+                    }
                 }
             }
         };
@@ -47,6 +56,9 @@ public class Rms extends Thread {
             public void run(){
                 for(int i=0; i<40; i++){
                     three();
+                    if(System.currentTimeMillis()>startTimes+1600){
+                        break;
+                    }
                 }
             }
         };
@@ -54,6 +66,9 @@ public class Rms extends Thread {
             public void run(){
                 for(int i=0; i<10; i++){
                     four();
+                    if(System.currentTimeMillis()>startTimes+1600){
+                        break;
+                    }
                 }
             }
         };
@@ -291,6 +306,9 @@ public class Rms extends Thread {
         boolean hasPermit=false;
         int counter=0;
         while(counter<200){
+            if(System.currentTimeMillis()>startTimes+1600){
+                break;
+            }
             try{ 
                 hasPermit=second.tryAcquire();
                 if(hasPermit){
